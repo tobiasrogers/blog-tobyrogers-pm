@@ -1,8 +1,9 @@
 ---
 import '../styles/global.css';
-interface Props { title: string; description?: string; article?: boolean; }
-const { title, description = 'Essays on product, strategy and creativity by Toby Rogers.', article = false } = Astro.props;
+interface Props { title: string; description?: string; article?: boolean; image?: string; }
+const { title, description = 'Essays on product, strategy and creativity by Toby Rogers.', article = false, image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const imageUrl = image ? new URL(image, Astro.site).toString() : undefined;
 const path = Astro.url.pathname;
 ---
 <!doctype html>
@@ -22,7 +23,9 @@ const path = Astro.url.pathname;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content={article ? 'article' : 'website'} />
-    <meta name="twitter:card" content="summary" />
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
     <!-- site.standard.document link tags are added at build time by `sequoia inject` -->
   </head>
   <body>

@@ -17,6 +17,7 @@
     "astro": "^7.0.0"
   },
   "devDependencies": {
-    "sequoia-cli": "^0.5.7"
+    "sequoia-cli": "^0.5.7",
+    "sharp": "^0.35.5"
   }
 }

@@ -26,5 +26,6 @@ h1 { font-size:2rem; margin:.2rem 0 .4rem; }
 .post-list p { margin:.3rem 0 0; color:var(--muted); font-size:.95rem; }
 blockquote { border-left:3px solid var(--accent); margin:1.5rem 0; padding:.1rem 1.2rem; color:var(--muted); }
 img { display:block; margin:0 auto; max-width:100%; height:auto; }
+.header-image { margin-bottom:1.5rem; }
 pre { overflow-x:auto; background:var(--rule); padding:1rem; font-size:.85rem; }
 footer { margin-top:3rem; padding-top:1rem; border-top:1px solid var(--rule); font:.85rem Inter, system-ui, sans-serif; color:var(--muted); }

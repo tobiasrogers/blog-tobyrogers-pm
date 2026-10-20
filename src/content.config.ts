@@ -10,6 +10,10 @@ const posts = defineCollection({
     date: z.coerce.date(),
     tags: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
+    // Header image, also used as the og:image link-preview image and (once
+    // uploaded) Sequoia's native coverImage. Resolved and resized by the
+    // sync script, same as body-embedded images.
+    image: z.string().optional(),
     // Written back by `sequoia sync --update-frontmatter`
     atUri: z.string().optional(),
   }),

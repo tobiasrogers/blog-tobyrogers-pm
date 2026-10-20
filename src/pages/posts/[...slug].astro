@@ -10,8 +10,9 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const fmt = new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' });
 ---
-<Base title={post.data.title} description={post.data.description} article>
+<Base title={post.data.title} description={post.data.description} image={post.data.image} article>
   <article>
+    {post.data.image && <img class="header-image" src={post.data.image} alt={post.data.title} />}
     <h1>{post.data.title}</h1>
     <div class="meta">{fmt.format(post.data.date)}</div>
     <Content />

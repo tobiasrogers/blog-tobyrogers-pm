@@ -36,6 +36,7 @@ The vault copy of a post (or page - see below) is the original. `src/content/pos
    date: 2026-10-20
    tags: [product]
    draft: false      # true keeps it out of the site and the network
+   image: header.jpg # optional - see Images below
    ---
    ```
 
@@ -49,9 +50,26 @@ Always release before push — publishing writes the `atUri` that `inject` needs
 pushing first means the live page ships without its network link tag.
 
 Run `npm run sync -- --dry-run` first to see what would change (or pass a different vault
-folder as an argument to override `.env` for a one-off run). Images: put them in an
-`attachments` folder inside the blog folder, or set `BLOG_ATTACHMENT_DIRS`
-(path-separator separated) to your vault attachment folders.
+folder as an argument to override `.env` for a one-off run).
+
+### Images
+
+Drag or paste an image into the note - Obsidian saves it and inserts
+`![[Pasted image ….png]]`. Put it in an `attachments` folder inside the blog
+folder (or set `BLOG_ATTACHMENT_DIRS`, path-separator separated, to wherever
+Obsidian actually saves attachments - check Settings -> Files and links). The
+sync script finds it, copies it into `public/images/`, and rewrites the embed.
+
+A post's `image:` front matter field works the same way but renders as a
+header image at the top of the post, and becomes the `og:image`/`twitter:image`
+used for link previews on Bluesky, Slack, etc. Point it at a bare filename
+(resolved the same way as an embed); a URL or a path starting with `/` is left
+as-is.
+
+Every image - header or embedded - is shrunk to a max width of 1600px and
+recompressed on sync, so a full-resolution phone photo never ships untouched.
+SVGs and GIFs are copied as-is (resizing a vector or an animation does more
+harm than good).
 
 ## Editing Start here / Now / Links
 

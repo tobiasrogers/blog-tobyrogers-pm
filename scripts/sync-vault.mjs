@@ -9,6 +9,7 @@
 // Pages sync from PAGES_VAULT_DIR the same way, if that's set; it's optional.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import sharp from 'sharp';
 
 try { process.loadEnvFile(); } catch { /* no .env file, fine */ }
 
@@ -31,6 +32,23 @@ const imageExt = /\.(png|jpe?g|gif|webp|svg|avif)$/i;
 const slugify = (s) =>
   s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+// Shrink anything wider than this before it's copied in - a full-res phone
+// photo has no business shipping untouched to a 40rem-wide text column.
+const MAX_IMAGE_WIDTH = 1600;
+const noResizeExt = /\.(gif|svg)$/i; // animated/vector - resizing would do more harm than good
+
+async function writeImage(from, to) {
+  if (noResizeExt.test(from)) { await fs.copyFile(from, to); return; }
+  const img = sharp(from).resize({ width: MAX_IMAGE_WIDTH, withoutEnlargement: true });
+  switch (path.extname(to).toLowerCase()) {
+    case '.jpg': case '.jpeg': img.jpeg({ quality: 82 }); break;
+    case '.png': img.png({ compressionLevel: 9 }); break;
+    case '.webp': img.webp({ quality: 82 }); break;
+    case '.avif': img.avif({ quality: 60 }); break;
+  }
+  await img.toFile(to);
+}
 
 async function walk(dir) {
   const out = [];
@@ -84,6 +102,25 @@ async function convert(text, notePath, files, slugs) {
   return text;
 }
 
+// A post's `image:` frontmatter field names a header image, the same way an
+// embed names one - resolve and copy it the same way, in place in the
+// frontmatter. A value that's already a URL or an absolute path is left alone.
+async function resolveHeaderImage(text, notePath, files) {
+  const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  const line = fm?.[1].match(/^image:\s*(.+)$/m);
+  if (!line) return text;
+  const value = line[1].trim().replace(/^['"]|['"]$/g, '');
+  if (/^https?:\/\//.test(value) || value.startsWith('/')) return text;
+  const found = await findImage(value, notePath);
+  if (!found) {
+    console.warn(`  ! header image not found: ${value} (in ${path.basename(notePath)})`);
+    return text;
+  }
+  const outName = slugify(path.basename(value, path.extname(value))) + path.extname(value).toLowerCase();
+  files.images.set(outName, found);
+  return text.replace(/^image:\s*.+$/m, `image: /images/${outName}`);
+}
+
 // sequoia publish writes atUri into the generated post after publishing, but
 // the vault source never has it - so a plain resync would wipe it every time
 // and make every post look "changed" forever. Carry it over from whatever's
@@ -113,7 +150,8 @@ for (const note of notes) {
   }
   if (/^draft:\s*true/m.test(fm[1])) { console.log(`- draft, skipping: ${name}`); continue; }
   const slug = slugify(path.basename(note, '.md'));
-  const body = await preserveAtUri(await convert(raw, note, files, slugs), path.join(postsDir, `${slug}.md`));
+  const withHeaderImage = await resolveHeaderImage(raw, note, files);
+  const body = await preserveAtUri(await convert(withHeaderImage, note, files, slugs), path.join(postsDir, `${slug}.md`));
   files.posts.set(`${slug}.md`, body);
 }
 
@@ -151,5 +189,5 @@ for (const [name, body] of files.posts) await fs.writeFile(path.join(postsDir, n
 // Pages are never removed automatically: losing a vault note shouldn't blank
 // out a live nav page. Delete the generated file by hand if one's retired.
 for (const [name, body] of files.pages) await fs.writeFile(path.join(pagesDir, name), body);
-for (const [name, from] of files.images) await fs.copyFile(from, path.join(imagesDir, name));
+for (const [name, from] of files.images) await writeImage(from, path.join(imagesDir, name));
 console.log('Synced.');
