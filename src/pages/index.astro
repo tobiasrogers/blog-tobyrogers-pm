@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+const posts = (await getCollection('posts', (p) => !p.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const fmt = new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' });
+---
+<Base title="Toby Rogers">
+  <ul class="post-list">
+    {posts.map((p) => (
+      <li>
+        <a class="title" href={`/posts/${p.id}`}>{p.data.title}</a>
+        <div class="meta">{fmt.format(p.data.date)}</div>
+        {p.data.description && <p>{p.data.description}</p>}
+      </li>
+    ))}
+  </ul>
+  {posts.length === 0 && <p>No posts yet.</p>}
+</Base>

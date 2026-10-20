@@ -1,0 +1,14 @@
+{
+  "$schema": "https://tangled.org/stevedylan.dev/sequoia/raw/main/sequoia.schema.json",
+  "siteUrl": "https://blog.tobyrogers.pm",
+  "contentDir": "src/content/posts",
+  "publicDir": "public",
+  "outputDir": "dist",
+  "pathPrefix": "/posts",
+  "publicationUri": "at://did:plc:2fhybrv44qxdv2f4hhc4cx3t/site.standard.publication/3mycpzfkmww2j",
+  "frontmatter": {
+    "publishDate": "date",
+    "coverImage": "image"
+  },
+  "publishContent": true
+}

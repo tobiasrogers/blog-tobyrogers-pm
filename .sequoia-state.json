@@ -1,0 +1,14 @@
+{
+  "posts": {
+    "src/content/posts/hello-world.md": {
+      "contentHash": "97092dfebc95752fa6cb8a3851d8367576653e72229bfa8fa8cd2ebb99ac2f91",
+      "atUri": "at://did:plc:2fhybrv44qxdv2f4hhc4cx3t/site.standard.document/3mycq7j5bkr2s",
+      "lastPublished": "2026-10-20T13:23:57.132Z",
+      "slug": "hello-world"
+    }
+  },
+  "publication": {
+    "cid": "bafyreic35f5vfpcvb743wki2gy2upqmi2zqbfirufz6adgelfld3hvc6zi",
+    "uri": "at://did:plc:2fhybrv44qxdv2f4hhc4cx3t/site.standard.publication/3mycpzfkmww2j"
+  }
+}

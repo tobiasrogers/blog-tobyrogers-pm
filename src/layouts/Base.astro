@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+interface Props { title: string; description?: string; article?: boolean; }
+const { title, description = 'Essays on product, strategy and creativity by Toby Rogers.', article = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const path = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === 'Toby Rogers' ? title : `${title} | Toby Rogers`}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title="Toby Rogers" href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta name="twitter:card" content="summary" />
+    <!-- site.standard.document link tags are added at build time by `sequoia inject` -->
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a class="brand" href="/">Toby Rogers</a>
+        <nav>
+          <a href="/start-here" aria-current={path.startsWith('/start-here') ? 'page' : undefined}>Start here</a>
+          <a href="/now" aria-current={path.startsWith('/now') ? 'page' : undefined}>Now</a>
+          <a href="/links" aria-current={path.startsWith('/links') ? 'page' : undefined}>Links</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
+      </header>
+      <main><slot /></main>
+      <footer>
+        &copy; {new Date().getFullYear()} Toby Rogers &middot;
+        <a href="https://www.tobyrogers.pm">tobyrogers.pm</a> &middot;
+        <a href="https://bsky.app/profile/tobyrogers.pm">Bluesky</a> &middot;
+        Published on the AT Protocol
+      </footer>
+    </div>
+  </body>
+</html>

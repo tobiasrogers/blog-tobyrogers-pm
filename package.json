@@ -1,0 +1,22 @@
+{
+  "name": "blog-tobyrogers-pm",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "sync": "node scripts/sync-vault.mjs",
+    "build": "astro build",
+    "release": "node scripts/sync-vault.mjs && sequoia publish",
+    "preview": "astro preview",
+    "build:cloudflare": "astro build && sequoia inject"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.0.0",
+    "astro": "^7.0.0"
+  },
+  "devDependencies": {
+    "sequoia-cli": "^0.5.7"
+  }
+}
