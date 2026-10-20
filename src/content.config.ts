@@ -15,4 +15,14 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { posts };
+// Static nav pages (Start here, Now, Links), synced from the vault's _PAGES
+// folder the same way posts are. Not published to the network - just content.
+const pages = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pages' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+  }),
+});
+
+export const collections = { posts, pages };

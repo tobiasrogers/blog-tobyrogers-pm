@@ -3,8 +3,8 @@
 Astro static site. Posts are written in Obsidian, synced here, published to your
 Atmosphere account with Sequoia, and deployed to Cloudflare Pages.
 
-The vault copy of a post is the original. `src/content/posts/` and `public/images/`
-are generated output: never edit them by hand.
+The vault copy of a post (or page - see below) is the original. `src/content/posts/`,
+`src/content/pages/` and `public/images/` are generated output: never edit them by hand.
 
 ## One-off set-up
 
@@ -52,6 +52,23 @@ Run `npm run sync -- --dry-run` first to see what would change (or pass a differ
 folder as an argument to override `.env` for a one-off run). Images: put them in an
 `attachments` folder inside the blog folder, or set `BLOG_ATTACHMENT_DIRS`
 (path-separator separated) to your vault attachment folders.
+
+## Editing Start here / Now / Links
+
+These three pages sync from the vault too, the same way posts do, just without
+dates or drafts - they're always-on nav pages, not timestamped entries.
+
+1. Set `PAGES_VAULT_DIR` in `.env` to your vault's pages folder (alongside
+   `BLOG_VAULT_DIR`). Each note needs a `title` in front matter and maps to a
+   page by its filename: `Now.md` -> `/now`, `Start here.md` -> `/start-here`,
+   `Links.md` -> `/links`.
+2. Edit the note in Obsidian, then `npm run sync` (or `npm run release` - it's
+   harmless to run on page-only changes, `sequoia publish` just finds nothing
+   new to publish).
+3. `git add -A && git commit && git push` to ship it.
+
+Unlike posts, a page removed from the vault is never auto-deleted from
+`src/content/pages/` - losing a note shouldn't blank out a live nav page.
 
 ## What the sync script converts
 

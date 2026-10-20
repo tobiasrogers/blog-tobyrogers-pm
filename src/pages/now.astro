@@ -1,28 +1,10 @@
 ---
+import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+const page = await getEntry('pages', 'now');
+const { Content } = page ? await render(page) : { Content: null };
 ---
-<Base title="Now">
-  <h1>Now</h1>
-  <p>Inspired by <a href="https://sivers.org/nowff">Derek Sivers' Now Pages movement</a>, here's a regularly updated log of what I'm currently up to:</p>
-  <ul>
-    <li>Head of Product at <a href="https://hedgehoglab.com">hedgehog lab</a>, a human-centred tech consultancy</li>
-    <li>Organising <a href="https://www.meetup.com/producttank-newcastle/">ProductTank Newcastle</a></li>
-    <li>Publishing a (mostly) weekly <a href="https://tobyrogers.beehiiv.com">newsletter</a></li>
-    <li>Writing this blog</li>
-  </ul>
-
-  <h2>Reading</h2>
-  <ul>
-    <li><a href="https://www.goodreads.com/en/book/show/59117967-let-s-do-it">Let's Do It: The Birth of Pop</a> by Bob Stanley</li>
-    <li><a href="https://www.goodreads.com/book/show/233333688">Japanese Gothic</a> by Kylie Lee Baker</li>
-    <li><a href="https://www.goodreads.com/book/show/390562.What_the_Buddha_Taught">What The Buddha Taught</a> by Walpola Rahula</li>
-  </ul>
-
-  <h2>Thinking About</h2>
-  <ul>
-    <li>Taste as a moat in the AI era</li>
-    <li>Are modern product managers more like record producers?</li>
-  </ul>
-
-  <p><em>Updated 20th October 2026</em></p>
+<Base title={page?.data.title ?? 'Now'} description={page?.data.description}>
+  <h1>{page?.data.title ?? 'Now'}</h1>
+  {page ? <Content /> : <p>Run <code>npm run sync</code> to pull this page's content from the vault.</p>}
 </Base>
