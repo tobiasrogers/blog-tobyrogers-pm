@@ -9,18 +9,21 @@ are generated output: never edit them by hand.
 ## One-off set-up
 
 1. `npm install`
-2. `npx sequoia login` (OAuth with your Bluesky account).
-3. `npx sequoia init`. Use these answers: site URL `https://blog.tobyrogers.pm`,
+2. Create a `.env` file (gitignored, never committed) with
+   `BLOG_VAULT_DIR="/path/to/vault/Blog"`. `npm run sync` and `npm run release`
+   pick this up automatically, so you never have to pass the path by hand.
+3. `npx sequoia login` (OAuth with your Bluesky account).
+4. `npx sequoia init`. Use these answers: site URL `https://blog.tobyrogers.pm`,
    content directory `src/content/posts`, public directory `public`,
    build output `dist`, path prefix `/posts`, date field `date`. Choose to create a new
    publication record. This writes `publicationUri` into `sequoia.json` and
    creates `public/.well-known/site.standard.publication`.
-4. Commit everything, including `sequoia.json` and `.sequoia-state.json`
+5. Commit everything, including `sequoia.json` and `.sequoia-state.json`
    (once it exists). `inject` needs the state file at build time.
-5. Create a Cloudflare Pages project from the repository:
+6. Create a Cloudflare Pages project from the repository:
    build command `npm run build:cloudflare`, output directory `dist`,
    environment variable `NODE_VERSION=22`.
-6. Add `blog.tobyrogers.pm` as the custom domain (see the cut-over notes below).
+7. Add `blog.tobyrogers.pm` as the custom domain (see the cut-over notes below).
 
 ## Writing a post
 
@@ -36,14 +39,19 @@ are generated output: never edit them by hand.
    ---
    ```
 
-2. Run `BLOG_VAULT_DIR="/path/to/vault/Blog" npm run release`. This syncs the folder
-   (read-only on the vault side), then `sequoia publish` writes the records to your account.
+2. Run `npm run release`. With `BLOG_VAULT_DIR` set in `.env` (see set-up above) this
+   needs no arguments: it syncs the folder (read-only on the vault side), then
+   `sequoia publish` writes the records to your account.
 3. `git add -A && git commit && git push`. Cloudflare builds the site and `sequoia inject`
    adds the verification link tags.
 
-Run `node scripts/sync-vault.mjs "/path/to/vault/Blog" --dry-run` first to see what
-would change. Images: put them in an `attachments` folder inside the blog folder, or set
-`BLOG_ATTACHMENT_DIRS` (path-separator separated) to your vault attachment folders.
+Always release before push — publishing writes the `atUri` that `inject` needs, so
+pushing first means the live page ships without its network link tag.
+
+Run `npm run sync -- --dry-run` first to see what would change (or pass a different vault
+folder as an argument to override `.env` for a one-off run). Images: put them in an
+`attachments` folder inside the blog folder, or set `BLOG_ATTACHMENT_DIRS`
+(path-separator separated) to your vault attachment folders.
 
 ## What the sync script converts
 

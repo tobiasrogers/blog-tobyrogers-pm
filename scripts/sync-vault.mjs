@@ -4,9 +4,11 @@
 // The vault is only ever READ. The repository copy is generated output.
 //
 // Usage: node scripts/sync-vault.mjs "<path to vault blog folder>" [--dry-run]
-//   or set BLOG_VAULT_DIR in the environment.
+//   or set BLOG_VAULT_DIR in the environment, or in a local .env file (gitignored).
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+
+try { process.loadEnvFile(); } catch { /* no .env file, fine */ }
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
