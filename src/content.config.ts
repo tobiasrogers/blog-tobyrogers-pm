@@ -19,7 +19,7 @@ const posts = defineCollection({
   }),
 });
 
-// Static nav pages (Start here, Now, Links), synced from the vault's _PAGES
+// Static nav pages (Start here, Now, Links), synced from the vault's PAGES
 // folder the same way posts are. Not published to the network - just content.
 const pages = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/pages' }),

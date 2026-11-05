@@ -107,7 +107,7 @@ async function convert(text, notePath, files, slugs) {
 // frontmatter. A value that's already a URL or an absolute path is left alone.
 async function resolveHeaderImage(text, notePath, files) {
   const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  const line = fm?.[1].match(/^image:\s*(.+)$/m);
+  const line = fm?.[1].match(/^image:[ \t]*(.+)$/m);
   if (!line) return text;
   const value = line[1].trim().replace(/^['"]|['"]$/g, '');
   if (/^https?:\/\//.test(value) || value.startsWith('/')) return text;
@@ -118,7 +118,7 @@ async function resolveHeaderImage(text, notePath, files) {
   }
   const outName = slugify(path.basename(value, path.extname(value))) + path.extname(value).toLowerCase();
   files.images.set(outName, found);
-  return text.replace(/^image:\s*.+$/m, `image: /images/${outName}`);
+  return text.replace(/^image:[ \t]*.+$/m, `image: /images/${outName}`);
 }
 
 // sequoia publish writes atUri into the generated post after publishing, but
@@ -148,7 +148,7 @@ for (const note of notes) {
   if (!/^title:/m.test(fm[1]) || !/^(date|pubDate|publishDate):/m.test(fm[1])) {
     problems.push(`${name}: needs title and date in front matter, skipped`); continue;
   }
-  if (/^draft:\s*true/m.test(fm[1])) { console.log(`- draft, skipping: ${name}`); continue; }
+  if (/^draft:[ \t]*["']?true["']?[ \t]*$/m.test(fm[1])) { console.log(`- draft, skipping: ${name}`); continue; }
   const slug = slugify(path.basename(note, '.md'));
   const withHeaderImage = await resolveHeaderImage(raw, note, files);
   const body = await preserveAtUri(await convert(withHeaderImage, note, files, slugs), path.join(postsDir, `${slug}.md`));
